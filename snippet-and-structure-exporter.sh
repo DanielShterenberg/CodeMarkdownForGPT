@@ -9,9 +9,9 @@ outputCode() {
   excludeDirs=("venv")  # Add directory names to exclude here
 
   # Build the prune command for find
-  pruneCmd=""
+  pruneCmd=()
   for excludeDir in "${excludeDirs[@]}"; do
-    pruneCmd="$pruneCmd -name $excludeDir -prune -o"
+    pruneCmd+=(-name "$excludeDir" -prune -o)
   done
 
   # Check for -s flag
@@ -49,7 +49,7 @@ outputCode() {
 
     # First, get all relevant file paths
     for fileType in "${fileTypes[@]}"; do
-        find . $pruneCmd -name "*.$fileType" | while IFS= read -r file; do
+        find . "${pruneCmd[@]}" -name "*.$fileType" | while IFS= read -r file; do
             skip=false
             for excludeDir in "${excludeDirs[@]}"; do
                 if [[ $file == ./$excludeDir/* ]]; then
