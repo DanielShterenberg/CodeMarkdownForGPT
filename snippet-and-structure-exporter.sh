@@ -5,6 +5,15 @@ outputCode() {
   # Flag for directory structure
   structure=false
 
+  # Directories to exclude - use space to separate them ("venv" "anotherDir" "yetAnotherDir")
+  excludeDirs=("venv")  # Add directory names to exclude here
+
+  # Build the prune command for find
+  pruneCmd=""
+  for excludeDir in "${excludeDirs[@]}"; do
+    pruneCmd="$pruneCmd -name $excludeDir -prune -o"
+  done
+
   # Check for -s flag
   while getopts ":s" opt; do
     case ${opt} in
@@ -22,7 +31,7 @@ outputCode() {
 
   # Go over the directory recursively for specified file types
   for fileType in "${fileTypes[@]}"; do
-    find . -name "*.$fileType" -print0 | while IFS= read -r -d '' file; do
+    eval "find . $pruneCmd -name \"*.$fileType\" -print0" | while IFS= read -r -d '' file; do
       echo "\`\`\` $file"
       echo "$(cat "$file")"
       echo "\`\`\`"
