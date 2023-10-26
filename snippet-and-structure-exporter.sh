@@ -24,6 +24,7 @@ build_prune_command() {
 
 # Function to output file content
 output_file_content() {
+  # Go over the directory recursively for specified file types
   for fileType in "${fileTypes[@]}"; do
     find . "${pruneCmd[@]}" -name "*.$fileType" -print0 | while IFS= read -r -d '' file; do
       echo "\`\`\` $file"
@@ -35,10 +36,12 @@ output_file_content() {
 
 # Function to output directory structure
 output_directory_structure() {
+  # Create a temporary file for processed directories
   tempDirFile=$(mktemp)
   projectName=${PWD##*/}
   echo "- $projectName"
 
+  # First, get all relevant file paths
   for fileType in "${fileTypes[@]}"; do
     find . "${pruneCmd[@]}" -name "*.$fileType" | process_directory_structure
   done
@@ -94,15 +97,21 @@ process_directory_structure() {
   done
 }
 
-outputCode() {
+project_snapshot() {
+  # Get file types from parameters
   fileTypes=("$@")
+  # Flag for directory structure
   structure=false
-  excludeDirs=("venv" "anotherDir" "yetAnotherDir")
+  # Directories to exclude - use space to separate them ("venv" "anotherDir" "yetAnotherDir")
+  excludeDirs=("venv")
+  # Build the prune command for find
   pruneCmd=()
 
   process_options "$@"
   build_prune_command
   output_file_content
+
+  # Output directory structure if -s flag is provided
   if $structure; then
     output_directory_structure
   fi
