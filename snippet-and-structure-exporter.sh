@@ -5,6 +5,15 @@ outputCode() {
   # Flag for directory structure
   structure=false
 
+  # Directories to exclude - use space to separate them ("venv" "anotherDir" "yetAnotherDir")
+  excludeDirs=("venv")  # Add directory names to exclude here
+
+  # Build the prune command for find
+  pruneCmd=()
+  for excludeDir in "${excludeDirs[@]}"; do
+    pruneCmd+=(-name "$excludeDir" -prune -o)
+  done
+
   # Check for -s flag
   while getopts ":s" opt; do
     case ${opt} in
@@ -22,7 +31,7 @@ outputCode() {
 
   # Go over the directory recursively for specified file types
   for fileType in "${fileTypes[@]}"; do
-    find . -name "*.$fileType" -print0 | while IFS= read -r -d '' file; do
+    eval "find . $pruneCmd -name \"*.$fileType\" -print0" | while IFS= read -r -d '' file; do
       echo "\`\`\` $file"
       echo "$(cat "$file")"
       echo "\`\`\`"
@@ -40,7 +49,18 @@ outputCode() {
 
     # First, get all relevant file paths
     for fileType in "${fileTypes[@]}"; do
-        find . -name "*.$fileType" | while IFS= read -r file; do
+        find . "${pruneCmd[@]}" -name "*.$fileType" | while IFS= read -r file; do
+            skip=false
+            for excludeDir in "${excludeDirs[@]}"; do
+                if [[ $file == ./$excludeDir/* ]]; then
+                    skip=true
+                    break
+                fi
+            done
+            if $skip; then
+                continue
+            fi
+
             fullPath=""
             # Splitting the path into parts using Zsh-specific parameter expansion
             parts=("${(@s:/:)file}")
