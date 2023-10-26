@@ -49,7 +49,18 @@ outputCode() {
 
     # First, get all relevant file paths
     for fileType in "${fileTypes[@]}"; do
-        find . -name "*.$fileType" | while IFS= read -r file; do
+        find . $pruneCmd -name "*.$fileType" | while IFS= read -r file; do
+            skip=false
+            for excludeDir in "${excludeDirs[@]}"; do
+                if [[ $file == ./$excludeDir/* ]]; then
+                    skip=true
+                    break
+                fi
+            done
+            if $skip; then
+                continue
+            fi
+
             fullPath=""
             # Splitting the path into parts using Zsh-specific parameter expansion
             parts=("${(@s:/:)file}")
