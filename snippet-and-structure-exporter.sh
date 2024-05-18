@@ -42,18 +42,36 @@ output_file_content() {
 
 # Function to output directory structure
 output_directory_structure() {
-    projectName=${PWD##*/}
-    echo "- $projectName"
+  projectName=${PWD##*/}
+  echo "- $projectName"
 
-    # Build the exclude option for the tree command
-    excludeOption=""
-    for excludeDir in "${excludeDirs[@]}"; do
-        excludeOption+=" -I '$excludeDir'"
+  # Remove any existing filtered_structure directory
+  rm -rf ./filtered_structure
+
+  # Check if any file types are specified
+  if [ ${#fileTypes[@]} -eq 0 ]; then
+    # No file types specified, include all files
+    find . "${pruneCmd[@]}" -type f -print | while read -r file; do
+      dir=$(dirname "$file")
+      mkdir -p "./filtered_structure/$dir"
+      cp "$file" "./filtered_structure/$file"
     done
+  else
+    # Include only specified file types
+    for fileType in "${fileTypes[@]}"; do
+      find . "${pruneCmd[@]}" -name "*.$fileType" -print | while read -r file; do
+        dir=$(dirname "$file")
+        mkdir -p "./filtered_structure/$dir"
+        cp "$file" "./filtered_structure/$file"
+      done
+    done
+  fi
 
-    # Use the tree command to output the directory structure
-    # -a shows hidden files, -I excludes directories, --dirsfirst sorts directories before files
-    eval "tree -a --dirsfirst $excludeOption"
+  # Use tree to display the filtered structure
+  tree ./filtered_structure
+
+  # Clean up the temporary filtered structure
+  rm -rf ./filtered_structure
 }
 
 # Main function to handle project snapshot

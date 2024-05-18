@@ -19,7 +19,7 @@ the terminal. It's a handy tool for quickly reviewing or sharing the current sta
     
 ## Usage
 
-To use Project Snapshot, you need to have Zsh installed on your machine.
+To use Project Snapshot, you need to have either Zsh or Bash installed on your machine.
 
 1. Clone this repository or download the script `project_snapshot.sh`.
 2. Make the script executable by running `chmod +x project_snapshot.sh`.
@@ -49,11 +49,14 @@ Specify the file types you want to include in the output by their extensions, se
 
 # Output the content of all .py files and include the directory structure
 ./project_snapshot.sh -s -f py
+
+# Output the directory structure and all file contents
+./project_snapshot.sh -s -f
 ```
 
 ## Integrating with Zsh
 
-To make this script easily accessible from anywhere, you can add it to your Zsh source.
+To make this script easily accessible from anywhere, you can add it to your Zsh or Bash source.
 
 1. Move `project_snapshot.sh` to a location in your PATH, for example `~/bin/`.
 2. Rename `project_snapshot.sh` to `project_snapshot` for easier access.
@@ -65,12 +68,17 @@ project_snapshot [options] filetypes...
 
 ### Adding to PATH (Optional)
 
-If you don't have a `bin` directory in your home directory or it's not included in your PATH, you can create it and add it to your PATH by adding the following lines to your `.zshrc` file:
-
+If you don't have a bin directory in your home directory or it's not included in your PATH, 
+you can create it and add it to your PATH by adding the following lines to your `.zshrc` (for Zsh) or `.bashrc` (for Bash) file:
 ```bash
 mkdir -p ~/bin
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
+```
+Or for Bash:
+```bash
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 Now move `project_snapshot.sh` to `~/bin/` and rename it to `project_snapshot`:
