@@ -62,7 +62,7 @@ project_snapshot() {
   structure=false
   files=false
   # Directories to exclude - use space to separate them ("venv" ".git" ".idea")
-  excludeDirs=("venv" ".git" ".idea")
+  excludeDirs=("venv" ".git" ".idea" "node_modules")
   # Build the prune command for find
   pruneCmd=()
 
