@@ -1,6 +1,6 @@
 # CodeMarkdownForGPT
 
-When working with chatGPT as a code-writing assistant, sometimes we need to share the code with him. Project Snapshot is
+When working with chatGPT as a code-writing assistant, sometimes we need to share the code with it. Project Snapshot is
 a script that allows you to output the content of specified file types along with an optional directory structure from
 the terminal. It's a handy tool for quickly reviewing or sharing the current state of your project's codebase.
 
@@ -32,6 +32,7 @@ To use Project Snapshot, you need to have Zsh installed on your machine.
 ### Options
 
 - `-s`: Include directory structure in the output.
+- `-f`: Include file contents for specified file types in the output.
 
 ### File Types
 
@@ -41,10 +42,13 @@ Specify the file types you want to include in the output by their extensions, se
 
 ```bash
 # Output the content of all .js and .css files
-./project_snapshot.sh js css
+./project_snapshot.sh -f js css
+
+# Output the directory structure only
+./project_snapshot.sh -s
 
 # Output the content of all .py files and include the directory structure
-./project_snapshot.sh -s py
+./project_snapshot.sh -s -f py
 ```
 
 ## Integrating with Zsh

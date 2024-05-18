@@ -1,18 +1,25 @@
+#!/bin/bash
+
 # Function to process command line options
 process_options() {
-  while getopts ":s" opt; do
+  while getopts ":sf" opt; do
     case ${opt} in
       s )
-        # Set flag
+        # Set flag for structure
         structure=true
         ;;
+      f )
+        # Set flag for file contents
+        files=true
+        ;;
       \? )
-        echo "Usage: outputCode [-s] filetypes"
-        return
+        echo "Usage: outputCode [-s] [-f] filetypes"
+        exit 1
         ;;
     esac
   done
   shift $((OPTIND -1))
+  fileTypes=("$@")  # Get the remaining arguments as file types
 }
 
 # Function to build the prune command for find
@@ -49,22 +56,30 @@ output_directory_structure() {
     eval "tree -a --dirsfirst $excludeOption"
 }
 
+# Main function to handle project snapshot
 project_snapshot() {
-  # Get file types from parameters
-  fileTypes=("$@")
-  # Flag for directory structure
+  # Flags for directory structure and file contents
   structure=false
-  # Directories to exclude - use space to separate them ("venv" "anotherDir" "yetAnotherDir")
+  files=false
+  # Directories to exclude - use space to separate them ("venv" ".git" ".idea")
   excludeDirs=("venv" ".git" ".idea")
   # Build the prune command for find
   pruneCmd=()
 
+  # Process options and file types
   process_options "$@"
   build_prune_command
-  output_file_content
 
   # Output directory structure if -s flag is provided
   if $structure; then
     output_directory_structure
   fi
+
+  # Output file contents if -f flag is provided
+  if $files; then
+    output_file_content
+  fi
 }
+
+# Run the project_snapshot function with the provided arguments
+project_snapshot "$@"
